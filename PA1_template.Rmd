@@ -46,7 +46,44 @@ maxdata[which.max(as.matrix(maxdata))]
 The time period with the maximum number of steps is the 835 (8:35 am) time period, with 206.1698 steps average.
 
 ## Imputing missing values
+Calculate and report the total number of missing values in the dataset:
+```{r, echo=TRUE}
+sum(is.na(actdata$steps))
+```
 
+Devise a strategy for filling in all of the missing values in the dataset:
+I have decided to use the mice package (Multivariate Imputation by Chained Equations) to impute
+the missing values in the dataset. This impuation uses predictive mean matching to fill in the
+missing values.
+
+Create a new dataset that is equal to the original dataset, but with the missing data filled in:
+```{r, echo=TRUE, results='hide'}
+library(mice)
+tempdata <- mice(actdata, m=1, maxit=25, seed=1024)
+```
+
+```{r, echo=TRUE}
+completedData <- complete(tempdata, 1)
+```
+
+Make a histogram of the total number of steps taken each day, and calculate and report the mean and
+median total number of steps taken per day:
+```{r, echo=TRUE}
+newCompletedData <- tapply(completedData$steps, completedData$date, sum)
+newCompletedData <- as.data.frame(newCompletedData)
+names(newCompletedData) <- c("steps")
+hist(newCompletedData$steps, col = "green", breaks=12, xlim = c(0, 25000), xlab = "Steps", main = "Histogram of Steps per Day")
+summary(newCompletedData$steps)
+```
+
+
+Do these values differ from the estimates from the first part of the assignment?
+Yes, the dataset with the imputed values has a higher overall mean and median steps per day,
+although the increase is not significant.
+
+What is the impact of imputing missing data on the estimates of the total daily number of steps?
+The impact is not significant, most likely because 'mice' used data that were statistically similar
+to fill in the missing values.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
