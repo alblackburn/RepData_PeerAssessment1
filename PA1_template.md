@@ -8,47 +8,72 @@ This assignment makes use of data from a personal activity monitoring device. Th
 ## Loading and preprocessing the data
 We will set the working directory to the RepData_PeerAssessment1 directory, and then read in the data.
 
-```{r, echo=TRUE}
+
+```r
 setwd("E:/Dropbox/JHU/repo/RepData_PeerAssessment1")
 actdata <- read.csv("activity/activity.csv")
 ```
 
 ## What is mean total number of steps taken per day?
 Calculate the total number of steps taken per day:
-```{r, echo=TRUE}
+
+```r
 newdata <- tapply(actdata$steps, actdata$date, sum)
 ```
 
 Make a histogram of the total number of steps taken per day:
-```{r, echo=TRUE}
+
+```r
 newdata <- as.data.frame(newdata)
 names(newdata) <- c("steps")
 hist(newdata$steps, col = "red", breaks=12, xlim = c(0, 25000), xlab = "Steps", main = "Histogram of Steps per Day")
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+
 Calculate and report the mean and median of the total number of steps taken per day:
-```{r, echo=TRUE}
+
+```r
 summary(newdata$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8841   10760   10770   13290   21190       8
 ```
 
 ## What is the average daily activity pattern?
 Make a time series plot of the 5-minute interval and the average number of steps taken, averaged
 across all days:
-```{r, echo=TRUE}
+
+```r
 plot(as.character(unique(actdata$interval)), tapply(actdata$steps, actdata$interval, mean, na.rm = TRUE), type="l", main = "Steps taken per 5-minute Interval", xlab = "Interval Time", ylab = "Number of Steps", col = "blue")
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+
 Which 5-minute interval, on average, contains the maximum number of steps?
-```{r, echo=TRUE}
+
+```r
 maxdata <- tapply(actdata$steps, actdata$interval, mean, na.rm = TRUE)
 maxdata[which.max(as.matrix(maxdata))]
+```
+
+```
+##      835 
+## 206.1698
 ```
 The time period with the maximum number of steps is the 835 (8:35 am) time period, with 206.1698 steps average.
 
 ## Imputing missing values
 Calculate and report the total number of missing values in the dataset:
-```{r, echo=TRUE}
+
+```r
 sum(is.na(actdata$steps))
+```
+
+```
+## [1] 2304
 ```
 
 Devise a strategy for filling in all of the missing values in the dataset:
@@ -57,23 +82,36 @@ the missing values in the dataset. This impuation uses predictive mean matching 
 missing values.
 
 Create a new dataset that is equal to the original dataset, but with the missing data filled in:
-```{r, echo=TRUE, results='hide'}
+
+```r
 library(mice)
 tempdata <- mice(actdata, m=1, maxit=25, seed=1024)
 ```
 
-```{r, echo=TRUE}
+
+```r
 completedData <- complete(tempdata, 1)
 ```
 
 Make a histogram of the total number of steps taken each day, and calculate and report the mean and
 median total number of steps taken per day:
-```{r, echo=TRUE}
+
+```r
 newCompletedData <- tapply(completedData$steps, completedData$date, sum)
 newCompletedData <- as.data.frame(newCompletedData)
 names(newCompletedData) <- c("steps")
 hist(newCompletedData$steps, col = "green", breaks=12, xlim = c(0, 25000), xlab = "Steps", main = "Histogram of Steps per Day")
+```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png)
+
+```r
 summary(newCompletedData$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    9819   11350   11450   14340   21190
 ```
 
 
@@ -89,7 +127,8 @@ to fill in the missing values.
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-```{r, echo=TRUE}
+
+```r
 completedData$date <- as.Date(completedData$date)
 completedData$wdwe <- weekdays(completedData$date)
 completedData$wdwe <- gsub("Monday", "weekday", completedData$wdwe)
@@ -103,9 +142,12 @@ completedData$wdwe <- as.factor(completedData$wdwe)
 ```
 
 Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days:
-```{r, echo=TRUE}
+
+```r
 splitdf <- split(completedData, completedData$wdwe)
 par(mfrow = c(1,2), mar = c(5,4,2,1))
 plot(as.character(unique(splitdf[[1]]$interval)), tapply(splitdf[[1]]$steps, splitdf[[1]]$interval, mean), type="l", main = "Weekdays", xlab = "Interval Time", ylab = "Number of Steps", col = "purple")
 plot(as.character(unique(splitdf[[2]]$interval)), tapply(splitdf[[2]]$steps, splitdf[[2]]$interval, mean), type="l", main = "Weekends", xlab = "Interval Time", ylab = "Number of Steps", col = "orange")
 ```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
