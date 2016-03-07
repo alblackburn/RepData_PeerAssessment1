@@ -87,3 +87,19 @@ to fill in the missing values.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+```{r, echo=TRUE}
+completedData$date <- as.Date(completedData$date)
+completedData$wdwe <- weekdays(completedData$date)
+completedData$wdwe <- gsub("Monday", "weekday", completedData$wdwe)
+completedData$wdwe <- gsub("Tuesday", "weekday", completedData$wdwe)
+completedData$wdwe <- gsub("Wednesday", "weekday", completedData$wdwe)
+completedData$wdwe <- gsub("Thursday", "weekday", completedData$wdwe)
+completedData$wdwe <- gsub("Friday", "weekday", completedData$wdwe)
+completedData$wdwe <- gsub("Saturday", "weekend", completedData$wdwe)
+completedData$wdwe <- gsub("Sunday", "weekend", completedData$wdwe)
+completedData$wdwe <- as.factor(completedData$wdwe)
+```
+
+Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days:

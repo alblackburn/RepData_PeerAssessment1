@@ -168,10 +168,23 @@ hist(newCompletedData$steps, col = &quot;green&quot;, breaks=12, xlim = c(0, 250
 <pre class="r"><code>summary(newCompletedData$steps)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##      41    9819   11350   11450   14340   21190</code></pre>
-<p>Do these values differ from the estimates from the first part of the assignment? Yes, the dataset with the imputed values has a What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
+<p>Do these values differ from the estimates from the first part of the assignment? Yes, the dataset with the imputed values has a higher overall mean and median steps per day, although the increase is not significant.</p>
+<p>What is the impact of imputing missing data on the estimates of the total daily number of steps? The impact is not significant, most likely because ‘mice’ used data that were statistically similar to fill in the missing values.</p>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
+<p>Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</p>
+<pre class="r"><code>completedData$date &lt;- as.Date(completedData$date)
+completedData$wdwe &lt;- weekdays(completedData$date)
+completedData$wdwe &lt;- gsub(&quot;Monday&quot;, &quot;weekday&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Tuesday&quot;, &quot;weekday&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Wednesday&quot;, &quot;weekday&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Thursday&quot;, &quot;weekday&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Friday&quot;, &quot;weekday&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Saturday&quot;, &quot;weekend&quot;, completedData$wdwe)
+completedData$wdwe &lt;- gsub(&quot;Sunday&quot;, &quot;weekend&quot;, completedData$wdwe)
+completedData$wdwe &lt;- as.factor(completedData$wdwe)</code></pre>
+<p>Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days:</p>
 </div>
 </div>
 
