@@ -8,23 +8,42 @@ This assignment makes use of data from a personal activity monitoring device. Th
 ## Loading and preprocessing the data
 We will set the working directory to the RepData_PeerAssessment1 directory, and then read in the data.
 
-```{r read.data, echo=TRUE}
+```{r, echo=TRUE}
 setwd("E:/Dropbox/JHU/repo/RepData_PeerAssessment1")
 actdata <- read.csv("activity/activity.csv")
 ```
 
 ## What is mean total number of steps taken per day?
 Calculate the total number of steps taken per day:
-```{r, calculate.steps, echo=TRUE}
+```{r, echo=TRUE}
 newdata <- tapply(actdata$steps, actdata$date, sum)
+```
+
+Make a histogram of the total number of steps taken per day:
+```{r, echo=TRUE}
 newdata <- as.data.frame(newdata)
 names(newdata) <- c("steps")
 hist(newdata$steps, col = "red", breaks=12, xlim = c(0, 25000), xlab = "Steps", main = "Histogram of Steps per Day")
 ```
 
+Calculate and report the mean and median of the total number of steps taken per day:
+```{r, echo=TRUE}
+summary(newdata$steps)
+```
+
 ## What is the average daily activity pattern?
+Make a time series plot of the 5-minute interval and the average number of steps taken, averaged
+across all days:
+```{r, echo=TRUE}
+plot(as.character(unique(actdata$interval)), tapply(actdata$steps, actdata$interval, mean, na.rm = TRUE), type="l", main = "Steps taken per 5-minute Interval", xlab = "Interval Time", ylab = "Number of Steps", col = "blue")
+```
 
-
+Which 5-minute interval, on average, contains the maximum number of steps?
+```{r, echo=TRUE}
+maxdata <- tapply(actdata$steps, actdata$interval, mean, na.rm = TRUE)
+maxdata[which.max(as.matrix(maxdata))]
+```
+The time period with the maximum number of steps is the 835 (8:35 am) time period, with 206.1698 steps average.
 
 ## Imputing missing values
 
