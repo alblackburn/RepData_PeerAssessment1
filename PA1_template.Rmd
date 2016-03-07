@@ -103,3 +103,11 @@ completedData$wdwe <- as.factor(completedData$wdwe)
 ```
 
 Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days:
+```{r, echo=TRUE}
+splitdf <- split(completedData, completedData$wdwe)
+par(mfrow = c(1,2), mar = c(5,4,2,1))
+plot(as.character(unique(splitdf[[1]]$interval)), tapply(splitdf[[1]]$steps, splitdf[[1]]$interval, mean), type="l", main = "Weekdays", xlab = "Interval Time", ylab = "Number of Steps", col = "purple")
+plot(as.character(unique(splitdf[[2]]$interval)), tapply(splitdf[[2]]$steps, splitdf[[2]]$interval, mean), type="l", main = "Weekends", xlab = "Interval Time", ylab = "Number of Steps", col = "orange")
+
+
+```
